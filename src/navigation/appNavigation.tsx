@@ -12,6 +12,7 @@ import { themeColors } from '../theme';
 import { images } from '../assets';
 
 import WelcomeScreen from '../screens/WelcomeScreen';
+import SignInScreen from '../screens/SignIn';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -26,7 +27,18 @@ export default function AppNavigation() {
                     options={{ headerShown: false }}
                     component={WelcomeScreen}
                     />
+                <Stack.Screen
+                    name="SignIn"
+                    options={{ headerShown: false }}
+                    component={SignInScreen}
+                    />    
+
+                
+
+
             </Stack.Navigator>
+
+            
         </NavigationContainer>
     );
 }

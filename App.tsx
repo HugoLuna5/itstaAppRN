@@ -1,7 +1,6 @@
 import AppNavigation from './src/navigation/appNavigation';
 import { useEffect, useState } from 'react';
 import { StatusBar } from 'react-native';
-import * as Font from 'expo-font';
 
 export default function App() {
   const [isFontLoaded, setFontLoaded] = useState(false);

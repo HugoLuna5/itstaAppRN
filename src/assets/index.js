@@ -2,7 +2,7 @@ import microscope from './images/microscope.png';
 import numbers from './images/numbers.png';
 import paint from './images/paint.png';
 import ruler from './images/ruler.png';
-import signin from './images/signin.png';
+import signin from './images/logo_itsta.png';
 import signup from './images/signup.png';
 import welcome from './images/welcome.png';
 import school1 from './images/school1.png';

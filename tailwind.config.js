@@ -16,7 +16,7 @@ module.exports = {
         robotoBold: ['robotoBold', 'sans'],
       },
       colors: {
-        bgPurple: '#5667FD',
+        bgPurple: '#1B396A',
         bgLightGray: '#EDEDED',
         bgLightGray2: '#E6E6E6',
         bgWhite: '#F4F5F9',

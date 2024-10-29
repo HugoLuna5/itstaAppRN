@@ -5,5 +5,6 @@ export type RootParamList = {
    Welcome: {};
    SignUp: {};
    SignIn: {};
+   Home: {};
 };
 

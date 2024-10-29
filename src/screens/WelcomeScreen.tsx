@@ -36,6 +36,7 @@ const WelcomeScreen = () => {
           onPrimaryBtnPress={() => {
             navigation.navigate('SignUp')
           }}
+          showSecondaryBtn={true}
           secondaryBtnText2={'Skip'}
           onSecondaryBtnPress={() => {
             navigation.navigate('SignIn')
