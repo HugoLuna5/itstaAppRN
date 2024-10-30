@@ -1,5 +1,5 @@
 import {View, Text, Image, Pressable, FlatList, ScrollView} from 'react-native';
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import HeaderText from './../components/HeaderText';
 import {images} from '../assets';
@@ -24,6 +24,9 @@ import {helpers} from '../utils/helpers';
 
 const {avatar} = images;
 
+import {newsService} from '../services/news';
+import ProgressDialog from '../components/ProgressDialog';
+
 export default function HomeScreen() {
   const [searchQuery, setSearchQuery] = useState('');
   const [teachers, setTeachers] = useState(teacherData);
@@ -32,6 +35,36 @@ export default function HomeScreen() {
   const [teachersFilterVisible, setTeachersFilterVisible] = useState(false);
   const [institutionsFilterVisible, setInstitutionsFilterVisible] =
     useState(false);
+
+  const [loading, setLoading] = useState(false);
+  const [newsCategories, setNewsCategories] = useState([]);
+  const [newsData, setNewsData] = useState([]);
+
+  useEffect(() => {
+    handleGetNews();
+  }, []);
+
+  const handleGetNews = async () => {
+    newsService.getNewsCategory().then((data: any) => {
+      if (data) {
+        setNewsCategories(data);
+      }
+    });
+
+    setLoading(true);
+    newsService
+      .getNews()
+      .then((data: any) => {
+        if (data) {
+          setNewsData(data);
+        }
+        setLoading(false);
+      })
+      .catch((error: any) => {
+        setLoading(false);
+        console.log(error);
+      });
+  };
 
   /**
    * @description Function to toggle the teachers filter visibility
@@ -127,7 +160,7 @@ export default function HomeScreen() {
         {/** ========================= Teachers Section =========================== */}
         <View className="mt-2">
           <SectionHeader
-            title={'Popular Teachers'}
+            title={'Carreras'}
             onFilterPress={toggleTeachersFilter}
             tintColor={
               teachersFilterVisible
@@ -153,16 +186,18 @@ export default function HomeScreen() {
             data={teachers}
             horizontal={true}
             className="w-full py-4 bg-transparent"
-            renderItem={({item}) => <TeacherItem teacher={item} />}
+            renderItem={({item}) => (
+              <TeacherItem teacher={item} key={`teacher-${item.id}`} />
+            )}
             keyExtractor={(item, index) => item.name}
             showsHorizontalScrollIndicator={false}
           />
         </View>
 
-        {/** ========================= Institutions Section =========================== */}
+        {/** ========================= POSTs Section =========================== */}
         <View className="mt-2">
           <SectionHeader
-            title={'Popular Institutions'}
+            title={'Publicaciones recientes'}
             onFilterPress={toggleInstitutionsFilter}
             tintColor={
               institutionsFilterVisible
@@ -174,7 +209,7 @@ export default function HomeScreen() {
           {/**============== Institution Filters ==================== */}
           {institutionsFilterVisible ? (
             <View className="flex flex-col mt-5 space-y-2">
-              <AreaFilter filters={areaFilters} />
+              <AreaFilter filters={newsCategories} />
             </View>
           ) : null}
 
@@ -183,11 +218,17 @@ export default function HomeScreen() {
             className={`w-full bg-transparent ${
               institutionsFilterVisible ? 'pt-0' : 'pt-4'
             }`}>
-            {institutions.map((institution, index) => (
-              <InstitutionItem institution={institution} key={index} />
+            {newsData.map((news, index) => (
+              <InstitutionItem
+                news={news}
+                categories={newsCategories}
+                key={`news-${index}`}
+              />
             ))}
           </View>
         </View>
+
+        <ProgressDialog isOpen={loading} />
       </ScrollView>
     </SafeAreaView>
   );

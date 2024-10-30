@@ -17,7 +17,30 @@ export default function BottomTabNavigator() {
   return (
     <Tab.Navigator initialRouteName="Explore">
       <Tab.Screen
-        name="Explore"
+        name="Noticias"
+        component={Home}
+        options={{
+          headerShown: false,
+          tabBarIcon(props) {
+            return (
+              // Custom tab bar icon
+              <Image
+                source={exploreIcon}
+                style={{
+                  tintColor: props.color,
+                  width: props.size,
+                  height: props.size,
+                }}
+                {...props}
+              />
+            );
+          },
+          ...extraTabOptions,
+        }}
+      />
+
+      <Tab.Screen
+        name="Notificaciones"
         component={Home}
         options={{
           headerShown: false,
@@ -61,7 +84,7 @@ export default function BottomTabNavigator() {
         }}
       />
       <Tab.Screen
-        name="Classwork"
+        name="Perfil"
         component={Home}
         options={{
           headerShown: false,

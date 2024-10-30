@@ -3,11 +3,11 @@ const getLocalGreeting = (): string => {
   const hours = now.getHours();
   let greeting;
   if (hours >= 5 && hours < 12) {
-    greeting = 'Good morning!';
+    greeting = '¡Buenos días!';
   } else if (hours >= 12 && hours < 17) {
-    greeting = 'Good afternoon!';
+    greeting = '¡Buenas tardes!';
   } else {
-    greeting = 'Good evening!';
+    greeting = '¡Buenas noches!';
   }
   return greeting;
 };
