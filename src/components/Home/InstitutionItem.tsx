@@ -5,7 +5,9 @@ import {newsService} from '../../services/news';
 import RenderHTML from 'react-native-render-html';
 
 const InstitutionItem = ({news, categories}) => {
-  const [imageNews, setImageNews] = useState('');
+  const [imageNews, setImageNews] = useState(
+    'https://itsta.edu.mx/wp-content/uploads/2019/01/home_itsta_slider_bg.jpg',
+  );
 
   useEffect(() => {
     getThumbnail(news.featured_media);
@@ -15,7 +17,6 @@ const InstitutionItem = ({news, categories}) => {
     newsService
       .getThumbnail(mediaId)
       .then((data: any) => {
-        console.log('data', data);
         if (data) {
           setImageNews(data.guid.rendered);
         } else {

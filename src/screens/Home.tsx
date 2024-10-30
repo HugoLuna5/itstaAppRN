@@ -8,17 +8,11 @@ import {
   AdjustmentsVerticalIcon,
 } from 'react-native-heroicons/outline';
 import {themeColors} from '../theme';
-import {
-  areaFilters,
-  institutionData,
-  subjectFilters,
-  teacherData,
-} from '../assets/data/data';
+import {institutionData, teacherData, careers} from '../assets/data/data';
 import InstitutionItem from '../components/Home/InstitutionItem';
 import AreaFilter from '../components/Home/AreaFilter';
 import SectionHeader from '../components/Home/SectionHeader';
-import TeacherItem from '../components/Home/TeacherItem';
-import SubjectFilter from '../components/Home/SubjectFilter';
+import CareersItem from '../components/Home/CareersItem';
 import SearchInput from '../components/Home/SearchInput';
 import {helpers} from '../utils/helpers';
 
@@ -29,48 +23,58 @@ import ProgressDialog from '../components/ProgressDialog';
 
 export default function HomeScreen() {
   const [searchQuery, setSearchQuery] = useState('');
-  const [teachers, setTeachers] = useState(teacherData);
-  const [institutions, setInstitutions] = useState(institutionData);
-  const [SelectedSubject, setSelectedSubject] = useState();
-  const [teachersFilterVisible, setTeachersFilterVisible] = useState(false);
+  const [careersFilterVisible, setCareersFilterVisible] = useState(false);
   const [institutionsFilterVisible, setInstitutionsFilterVisible] =
     useState(false);
 
   const [loading, setLoading] = useState(false);
   const [newsCategories, setNewsCategories] = useState([]);
   const [newsData, setNewsData] = useState([]);
+  const [careersData, setCareersData] = useState(careers);
+  const [fullName, setFullName] = useState('');
 
   useEffect(() => {
+    handleGetInfo();
     handleGetNews();
   }, []);
 
-  const handleGetNews = async () => {
-    newsService.getNewsCategory().then((data: any) => {
-      if (data) {
-        setNewsCategories(data);
-      }
-    });
+  const handleGetInfo = async () => {
+    const fullName = 'Hardline Scott';
+    setFullName(fullName);
+  };
 
+  const handleGetNews = async () => {
     setLoading(true);
+
     newsService
-      .getNews()
-      .then((data: any) => {
-        if (data) {
-          setNewsData(data);
+      .getNewsCategory()
+      .then((dataCat: any) => {
+        if (dataCat) {
+          setNewsCategories(dataCat);
+          newsService
+            .getNews()
+            .then((data: any) => {
+              if (data) {
+                setNewsData(data);
+              }
+              setLoading(false);
+            })
+            .catch((error: any) => {
+              setLoading(false);
+              console.log(error);
+            });
         }
-        setLoading(false);
       })
       .catch((error: any) => {
         setLoading(false);
-        console.log(error);
       });
   };
 
   /**
    * @description Function to toggle the teachers filter visibility
    */
-  const toggleTeachersFilter = () => {
-    setTeachersFilterVisible(!teachersFilterVisible);
+  const toggleCareersFilter = () => {
+    setCareersFilterVisible(!careersFilterVisible);
   };
 
   /**
@@ -86,7 +90,7 @@ export default function HomeScreen() {
    */
   const handleSearchChange = searchQuery => {
     setSearchQuery(searchQuery);
-    setTeachersFilterVisible(false);
+    setCareersFilterVisible(false);
     setInstitutionsFilterVisible(false);
 
     // set query to lowercase
@@ -96,13 +100,11 @@ export default function HomeScreen() {
     const filteredTeachers = teacherData.filter(teacher =>
       teacher.name.toLowerCase().includes(lowerCaseQuery),
     );
-    setTeachers(filteredTeachers);
 
     // Filter institutions based on the search query
     const filteredInstitutions = institutionData.filter(institution =>
       institution.name.toLowerCase().includes(lowerCaseQuery),
     );
-    setInstitutions(filteredInstitutions);
   };
 
   /**
@@ -110,19 +112,7 @@ export default function HomeScreen() {
    * @param {*} subject
    */
   const filterTeachersBySubject = subject => {
-    setSelectedSubject(subject);
-
     // Filter the teachers based on the selected subject
-    if (subject.toLowerCase() === 'all subjects') {
-      setTeachers(teacherData); // Show all teachers when 'All Subjects' is selected
-    } else if (subject.toLowerCase() === 'science for technology') {
-      setTeachers(teacherData);
-    } else {
-      const filteredTeachers = teacherData.filter(
-        teacher => teacher.subject.toLowerCase() === subject.toLowerCase(),
-      );
-      setTeachers(filteredTeachers);
-    }
   };
 
   return (
@@ -132,7 +122,7 @@ export default function HomeScreen() {
         <View className="">
           {/** Get greeting based on current time */}
           <HeaderText text={helpers.getLocalGreeting()} />
-          <Text className="font-exo font-semibold text-lg">Hardline Scott</Text>
+          <Text className="font-exo font-semibold text-lg">{fullName}</Text>
         </View>
         {/** ============= Profile image/avatar ============ */}
         <View className="bg-bgWhite shadow-xl rounded-xl">
@@ -143,7 +133,7 @@ export default function HomeScreen() {
       <View className="flex flex-row items-center justify-between my-7">
         <View className="flex-1">
           <SearchInput
-            placeholder={'Search'}
+            placeholder={'Buscar...'}
             value={searchQuery}
             onChange={handleSearchChange}
             Icon={MagnifyingGlassIcon}
@@ -157,39 +147,33 @@ export default function HomeScreen() {
       <ScrollView
         showsVerticalScrollIndicator={false}
         className=" h-full w-full">
-        {/** ========================= Teachers Section =========================== */}
+        {/** ========================= Careers Section =========================== */}
         <View className="mt-2">
           <SectionHeader
             title={'Carreras'}
-            onFilterPress={toggleTeachersFilter}
+            onFilterPress={() => {
+              setCareersData(
+                careersData.sort((a, b) =>
+                  careersFilterVisible ? a.id - b.id : b.id - a.id,
+                ),
+              );
+              toggleCareersFilter();
+            }}
             tintColor={
-              teachersFilterVisible
+              careersFilterVisible
                 ? themeColors.bgPurple
                 : themeColors.lightGrayText
             }
           />
 
-          {/**============== Teacher Filters ==================== */}
-          {teachersFilterVisible ? (
-            <View className="flex flex-col my-5 space-y-2">
-              <AreaFilter filters={areaFilters} />
-              <SubjectFilter
-                filters={subjectFilters}
-                onSubjectSelect={filterTeachersBySubject}
-              />
-            </View>
-          ) : null}
-
           {/** ========================= Render List of Teachers =========================== */}
 
           <FlatList
-            data={teachers}
+            data={careers}
             horizontal={true}
             className="w-full py-4 bg-transparent"
-            renderItem={({item}) => (
-              <TeacherItem teacher={item} key={`teacher-${item.id}`} />
-            )}
-            keyExtractor={(item, index) => item.name}
+            renderItem={({item}) => <CareersItem career={item} />}
+            keyExtractor={(item, index) => `career-${index}`}
             showsHorizontalScrollIndicator={false}
           />
         </View>
