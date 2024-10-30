@@ -2,7 +2,14 @@ import {themeColors} from '../theme';
 import {images} from '../assets';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {Image} from 'react-native';
-const {streamIcon, classWorkIcon, exploreIcon} = images;
+const {
+  streamIcon,
+  classWorkIcon,
+  exploreIcon,
+  newsIcon,
+  notificationIcon,
+  userIcon,
+} = images;
 const extraTabOptions = {
   tabBarLabelStyle: {fontFamily: 'exo'},
   tabBarStyle: {borderTopRightRadius: 12, borderTopLeftRadius: 12},
@@ -15,7 +22,7 @@ import Home from '../screens/Home';
 
 export default function BottomTabNavigator() {
   return (
-    <Tab.Navigator initialRouteName="Explore">
+    <Tab.Navigator initialRouteName="Noticias">
       <Tab.Screen
         name="Noticias"
         component={Home}
@@ -25,7 +32,7 @@ export default function BottomTabNavigator() {
             return (
               // Custom tab bar icon
               <Image
-                source={exploreIcon}
+                source={newsIcon}
                 style={{
                   tintColor: props.color,
                   width: props.size,
@@ -35,6 +42,7 @@ export default function BottomTabNavigator() {
               />
             );
           },
+          tabBarShowLabel: false,
           ...extraTabOptions,
         }}
       />
@@ -48,7 +56,7 @@ export default function BottomTabNavigator() {
             return (
               // Custom tab bar icon
               <Image
-                source={exploreIcon}
+                source={notificationIcon}
                 style={{
                   tintColor: props.color,
                   width: props.size,
@@ -61,28 +69,7 @@ export default function BottomTabNavigator() {
           ...extraTabOptions,
         }}
       />
-      <Tab.Screen
-        name="Stream"
-        component={Home}
-        options={{
-          headerShown: false,
-          tabBarIcon(props) {
-            return (
-              // Custom tab bar icon
-              <Image
-                source={streamIcon}
-                style={{
-                  tintColor: props.color,
-                  width: props.size,
-                  height: props.size,
-                }}
-                {...props}
-              />
-            );
-          },
-          ...extraTabOptions,
-        }}
-      />
+
       <Tab.Screen
         name="Perfil"
         component={Home}
@@ -92,7 +79,7 @@ export default function BottomTabNavigator() {
             return (
               // Custom tab bar icon
               <Image
-                source={classWorkIcon}
+                source={userIcon}
                 style={{
                   tintColor: props.color,
                   width: props.size,

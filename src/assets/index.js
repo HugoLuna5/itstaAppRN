@@ -17,6 +17,9 @@ import streamIcon from './images/streamIcon.png';
 import exploreIcon from './images/exploreIcon.png';
 import classWorkIcon from './images/classWorkIcon.png';
 import funnel from './images/funnel.png';
+import newsIcon from './icons/news.png';
+import userIcon from './icons/user.png';
+import notificationIcon from './icons/notifications.png';
 
 export const images = {
   microscope,
@@ -38,4 +41,7 @@ export const images = {
   exploreIcon,
   classWorkIcon,
   funnel,
+  newsIcon,
+  userIcon,
+  notificationIcon,
 };

@@ -14,6 +14,8 @@ import {images} from '../assets';
 import WelcomeScreen from '../screens/WelcomeScreen';
 import SignInScreen from '../screens/SignIn';
 import BottomTabNavigator from './BottomTabNavigator';
+import HomeScreen from '../screens/Home';
+import ProfileScreen from '../screens/ProfileScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -35,7 +37,13 @@ export default function AppNavigation() {
         <Stack.Screen
           name="Home"
           options={{headerShown: false}}
-          component={BottomTabNavigator}
+          component={HomeScreen}
+        />
+
+        <Stack.Screen
+          name="Profile"
+          options={{headerShown: true, headerTitle: ''}}
+          component={ProfileScreen}
         />
       </Stack.Navigator>
     </NavigationContainer>

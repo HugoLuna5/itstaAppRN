@@ -1,4 +1,12 @@
-import {View, Text, Image, Pressable, FlatList, ScrollView} from 'react-native';
+import {
+  View,
+  Text,
+  Image,
+  Pressable,
+  FlatList,
+  ScrollView,
+  TouchableOpacity,
+} from 'react-native';
 import React, {useEffect, useState} from 'react';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import HeaderText from './../components/HeaderText';
@@ -17,11 +25,16 @@ import SearchInput from '../components/Home/SearchInput';
 import {helpers} from '../utils/helpers';
 
 const {avatar} = images;
-
+import {studentService} from '../services/student';
 import {newsService} from '../services/news';
 import ProgressDialog from '../components/ProgressDialog';
+import {useNavigation} from '@react-navigation/native';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {RootParamList} from '../navigation/navigationParamList';
 
 export default function HomeScreen() {
+  const navigation = useNavigation<NativeStackNavigationProp<RootParamList>>();
+
   const [searchQuery, setSearchQuery] = useState('');
   const [careersFilterVisible, setCareersFilterVisible] = useState(false);
   const [institutionsFilterVisible, setInstitutionsFilterVisible] =
@@ -35,12 +48,59 @@ export default function HomeScreen() {
 
   useEffect(() => {
     handleGetInfo();
-    handleGetNews();
+    handleGetToken();
   }, []);
 
   const handleGetInfo = async () => {
-    const fullName = 'Hardline Scott';
-    setFullName(fullName);
+    helpers.handleGetData().then((data: any) => {
+      if (data) {
+        setFullName(data.fullName);
+      }
+    });
+  };
+
+  const handleGetToken = async () => {
+    setLoading(true);
+    Promise.all([
+      helpers.refreshLocalAccessToken(),
+      newsService.getNewsCategory(),
+      newsService.getNews(),
+    ])
+      .then(async data => {
+        console.log('data', data);
+
+        if (data[0]) {
+          const dataResult: any = data[0];
+          studentService
+            .getData(
+              dataResult.controlURL,
+              dataResult.passwordURL,
+              dataResult.psieURL,
+              dataResult.dummyURL,
+            )
+            .then((info: any) => {
+              console.log('info', info);
+              helpers.handleSaveData(info);
+              setFullName(info.fullName);
+            });
+
+          if (data[1]) {
+            const dataCat: any = data[1];
+            setNewsCategories(dataCat);
+          }
+
+          if (data[2]) {
+            const dataNews: any = data[2];
+            setNewsData(dataNews);
+          }
+        }
+
+        setLoading(false);
+      })
+      .catch(error => {
+        setLoading(false);
+        console.log(error);
+      });
   };
 
   const handleGetNews = async () => {
@@ -115,6 +175,11 @@ export default function HomeScreen() {
     // Filter the teachers based on the selected subject
   };
 
+  const handleGoToProfile = () => {
+    // Navigate to profile screen
+    navigation.navigate('Profile');
+  };
+
   return (
     <SafeAreaView className="bg-bgWhite px-7 pt-5 pb-[-35px] flex-1">
       {/**============= Header Area =================== */}
@@ -125,9 +190,11 @@ export default function HomeScreen() {
           <Text className="font-exo font-semibold text-lg">{fullName}</Text>
         </View>
         {/** ============= Profile image/avatar ============ */}
-        <View className="bg-bgWhite shadow-xl rounded-xl">
-          <Image source={avatar} style={{height: 62, width: 62}} />
-        </View>
+        <TouchableOpacity onPress={handleGoToProfile}>
+          <View className="bg-bgWhite shadow-xl rounded-xl">
+            <Image source={avatar} style={{height: 62, width: 62}} />
+          </View>
+        </TouchableOpacity>
       </View>
       {/** ================ Search Input  ========================= */}
       <View className="flex flex-row items-center justify-between my-7">
