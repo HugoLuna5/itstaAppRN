@@ -31,22 +31,22 @@ export default function SignInScreen() {
   const handleSignIn = () => {
     if (noControl && password) {
       setLoading(true);
-      authService.signinService(noControl, password)
-        .then((res: any) => {
-          Alert.alert('Bienvenido');
-          console.log(res);
-
+      authService
+        .signinService(noControl, password)
+        .then(async (res: any) => {
           setLoading(false);
-          if(res.passwordURL) {
-            AsyncStorage.setItem('username', noControl);
-            AsyncStorage.setItem('password', password);
+          const data = res.result.access;
+          if (data.passwordURL) {
+            console.log('Has iniciado sesión');
+            await AsyncStorage.setItem('username', noControl);
+            await AsyncStorage.setItem('password', password);
 
-            AsyncStorage.setItem('passwordURL', res.access.passwordURL);
-            AsyncStorage.setItem('controlURL', res.access.controlURL);
-            AsyncStorage.setItem('psieURL', res.access.psieURL);
-            AsyncStorage.setItem('dummyURL', res.access.dummyURL);
+            await AsyncStorage.setItem('passwordURL', data.passwordURL);
+            await AsyncStorage.setItem('controlURL', data.controlURL);
+            await AsyncStorage.setItem('psieURL', data.psieURL);
+            await AsyncStorage.setItem('dummyURL', data.dummyURL);
+            navigation.navigate('Home');
           }
-        
         })
         .catch(error => {
           setLoading(false);
@@ -98,12 +98,8 @@ export default function SignInScreen() {
           onSecondaryBtnPress={() => {}}
         />
 
-
-        <ProgressDialog
-          isOpen={loading} />
+        <ProgressDialog isOpen={loading} />
       </View>
-
-
     </SafeAreaView>
   );
 }

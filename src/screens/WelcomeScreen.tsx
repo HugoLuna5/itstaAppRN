@@ -1,23 +1,35 @@
-import { View, Text, Image, TouchableOpacity, Pressable } from 'react-native';
-import React from 'react';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { useNavigation } from '@react-navigation/native';
-import { welcomeScreenData } from '../assets/data/data';
-import { images } from '../assets';
+import {View, Text, Image, TouchableOpacity, Pressable} from 'react-native';
+import React, {useEffect} from 'react';
+import {SafeAreaView} from 'react-native-safe-area-context';
+import {useNavigation} from '@react-navigation/native';
+import {welcomeScreenData} from '../assets/data/data';
+import {images} from '../assets';
 import Button from '../components/Button';
-import { RootParamList } from './../navigation/navigationParamList';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { styled } from 'nativewind';
-const { welcome } = images;
+import {RootParamList} from './../navigation/navigationParamList';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {styled} from 'nativewind';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+const {welcome} = images;
 
 const WelcomeScreen = () => {
   const navigation = useNavigation<NativeStackNavigationProp<RootParamList>>();
+
+  useEffect(() => {
+    console.log('Test');
+    AsyncStorage.getItem('username').then(value => {
+      console.log('username', value);
+      if (value) {
+        navigation.navigate('Home');
+      }
+    });
+  }, []);
+
   return (
     <SafeAreaView className="flex-1 bg-bgWhite">
       <View className="flex-1 flex justify-around my-4">
         {/** ====================== Image =================================== */}
         <View className="flex-row justify-center">
-          <Image source={welcome} style={{ width: 324, height: 324 }} />
+          <Image source={welcome} style={{width: 324, height: 324}} />
         </View>
 
         {/** ====================== Welcome Text ============================= */}
@@ -34,18 +46,17 @@ const WelcomeScreen = () => {
         <Button
           primaryBtnText={'Sign Up'}
           onPrimaryBtnPress={() => {
-            navigation.navigate('SignUp')
+            navigation.navigate('SignUp');
           }}
           showSecondaryBtn={true}
           secondaryBtnText2={'Skip'}
           onSecondaryBtnPress={() => {
-            navigation.navigate('SignIn')
+            navigation.navigate('SignIn');
           }}
         />
       </View>
     </SafeAreaView>
   );
-}
-
+};
 
 export default styled(WelcomeScreen);
